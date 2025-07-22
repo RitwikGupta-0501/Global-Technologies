@@ -1,0 +1,8 @@
+[project]
+name = "Global-Technologies"
+version = "0.1.0"
+description = "Backend API for Global Technologies"
+dependencies = [
+    "django>=5.2.4",
+    "djangorestframework>=3.16.0",
+]
