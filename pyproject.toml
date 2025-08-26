@@ -1,8 +1,10 @@
 [project]
-name = "Global-Technologies"
+name = "global-technologies"
 version = "0.1.0"
-description = "Backend API for Global Technologies"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
 dependencies = [
-    "django>=5.2.4",
-    "djangorestframework>=3.16.0",
+    "djangorestframework>=3.16.1",
+    "psycopg2-binary>=2.9.10",
 ]
