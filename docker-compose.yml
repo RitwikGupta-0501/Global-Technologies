@@ -1,26 +1,27 @@
 services:
   postgres-db:
-    image: postgres:16-alpine # Using a specific version is a best practice
+    image: postgres:16-alpine 
     container_name: global_tech_postgres
-    restart: always
+    restart: on-failure
     environment:
       # Set your desired username and password
       POSTGRES_USER: root
       POSTGRES_PASSWORD: root
+      POSTGRES_DB: global_tech 
     ports:
-      - "5432:5432" # Maps port 5432 on your machine to the container's port
+      - "5432:5432"
     volumes:
-      - /data/Programming/postgresql/data:/var/lib/postgresql/data # This persists your data
+      - /data/Programming/postgresql/data:/var/lib/postgresql/data
 
   pgadmin:
     image: dpage/pgadmin4
     container_name: gloabl_tech_pgadmin
-    restart: always
+    restart: on-failure
     environment:
       # Set the email and password for the pgAdmin login page
       PGADMIN_DEFAULT_EMAIL: admin@gmail.com
       PGADMIN_DEFAULT_PASSWORD: admin
     ports:
-      - "5050:80" # Access pgAdmin on http://localhost:5050
+      - "5050:80"
     depends_on:
-      - postgres-db # Tells Docker to start postgres before pgadmin
+      - postgres-db
