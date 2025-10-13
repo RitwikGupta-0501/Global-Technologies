@@ -56,27 +56,28 @@ cover/
 *.pot
 
 # Django stuff:
+migrations/
 *.log
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
 
 # Flask stuff:
-instance/
-.webassets-cache
+# instance/
+# .webassets-cache
 
 # Scrapy stuff:
-.scrapy
+# .scrapy
 
 # Sphinx documentation
-docs/_build/
+# docs/_build/
 
 # PyBuilder
-.pybuilder/
-target/
+# .pybuilder/
+# target/
 
 # Jupyter Notebook
-.ipynb_checkpoints
+# .ipynb_checkpoints
 
 # IPython
 profile_default/
@@ -98,7 +99,7 @@ ipython_config.py
 #   Similar to Pipfile.lock, it is generally recommended to include uv.lock in version control.
 #   This is especially recommended for binary packages to ensure reproducibility, and is more
 #   commonly ignored for libraries.
-uv.lock
+# uv.lock
 
 # poetry
 #   Similar to Pipfile.lock, it is generally recommended to include poetry.lock in version control.
@@ -132,7 +133,7 @@ celerybeat-schedule
 celerybeat.pid
 
 # SageMath parsed files
-*.sage.py
+# *.sage.py
 
 # Environments
 .env
@@ -145,11 +146,11 @@ env.bak/
 venv.bak/
 
 # Spyder project settings
-.spyderproject
-.spyproject
+# .spyderproject
+# .spyproject
 
 # Rope project settings
-.ropeproject
+# .ropeproject
 
 # mkdocs documentation
 /site
@@ -160,7 +161,7 @@ venv.bak/
 dmypy.json
 
 # Pyre type checker
-.pyre/
+# .pyre/
 
 # pytype static type analyzer
 .pytype/
@@ -179,7 +180,7 @@ cython_debug/
 # Abstra is an AI-powered process automation framework.
 # Ignore directories containing user credentials, local state, and settings.
 # Learn more at https://abstra.io/docs
-.abstra/
+# .abstra/
 
 # Visual Studio Code
 #  Visual Studio Code specific template is maintained in a separate VisualStudioCode.gitignore 
@@ -198,10 +199,10 @@ cython_debug/
 #  Cursor is an AI-powered code editor. `.cursorignore` specifies files/directories to
 #  exclude from AI features like autocomplete and code analysis. Recommended for sensitive data
 #  refer to https://docs.cursor.com/context/ignore-files
-.cursorignore
-.cursorindexingignore
+# .cursorignore
+# .cursorindexingignore
 
 # Marimo
-marimo/_static/
-marimo/_lsp/
-__marimo__/
+# marimo/_static/
+# marimo/_lsp/
+# __marimo__/
