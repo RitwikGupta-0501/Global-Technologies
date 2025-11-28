@@ -4,7 +4,6 @@ services:
     container_name: global_tech_postgres
     restart: on-failure
     environment:
-      # Set your desired username and password
       POSTGRES_USER: root
       POSTGRES_PASSWORD: root
       POSTGRES_DB: global_tech 
@@ -12,16 +11,3 @@ services:
       - "5432:5432"
     volumes:
       - /data/Programming/postgresql/data:/var/lib/postgresql/data
-
-  pgadmin:
-    image: dpage/pgadmin4
-    container_name: gloabl_tech_pgadmin
-    restart: on-failure
-    environment:
-      # Set the email and password for the pgAdmin login page
-      PGADMIN_DEFAULT_EMAIL: admin@gmail.com
-      PGADMIN_DEFAULT_PASSWORD: admin
-    ports:
-      - "5050:80"
-    depends_on:
-      - postgres-db

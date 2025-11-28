@@ -1,13 +1,18 @@
 from django.db import models
 
+from django.db import models
+
 class Product(models.Model):
     class PriceTypes(models.TextChoices):
-        FIXED = 'F'
-        NEGOTIABLE = 'N'
+        FIXED = 'F', 'Fixed'
+        NEGOTIABLE = 'N', 'Negotiable'
 
-    name: str = models.CharField(verbose_name="Product Name")
-    description: str = models.TextField(verbose_name="Product Description")
-    price: float = models.FloatField(verbose_name="Product Price")
-    price_type: str = models.CharField(max_length=1, choices=PriceTypes, verbose_name="Price Type")
+    name = models.CharField(max_length=255, verbose_name="Product Name") 
+    description = models.TextField(verbose_name="Product Description")
+    price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Product Price", null=True, blank=True)    
+    price_type = models.CharField(max_length=1, choices=PriceTypes.choices, default=PriceTypes.FIXED, verbose_name="Price Type")
+
+    def __str__(self):
+        return self.name
     
     # TODO: Add More Fields later as per requirement
