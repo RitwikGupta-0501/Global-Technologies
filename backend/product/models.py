@@ -26,6 +26,6 @@ class Product(models.Model):
     )
 
     def __str__(self):
-        return self.name
+        return str(self.name)
 
     # TODO: Add More Fields later as per requirement
