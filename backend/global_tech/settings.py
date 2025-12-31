@@ -36,6 +36,7 @@ ALLOWED_HOSTS = []
 
 # Application definition
 INSTALLED_APPS = [
+    "unfold",  # Theme for admin page
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -46,6 +47,8 @@ INSTALLED_APPS = [
     "user",
     "product",
     "core",
+    # Customization
+    "django_json_widget",
 ]
 
 MIDDLEWARE = [

@@ -3,29 +3,41 @@ from django.db import models
 
 class Product(models.Model):
     class PriceTypes(models.TextChoices):
-        FIXED = "F", "Fixed"
-        NEGOTIABLE = "N", "Negotiable"
+        FIXED = "fixed", "Fixed"
+        QUOTE = "quote", "Quote"
 
-    name = models.CharField(max_length=255, verbose_name="Product Name")
-    description = models.TextField(verbose_name="Product Description")
-    price = models.DecimalField(
-        max_digits=10,
-        decimal_places=2,
-        verbose_name="Product Price",
-        null=True,
-        blank=True,
-    )
+    name = models.CharField(max_length=255)
+    description = models.TextField()
+
+    # Pricing
+    price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     price_type = models.CharField(
-        max_length=1,
-        choices=PriceTypes.choices,
-        default=PriceTypes.FIXED,
-        verbose_name="Price Type",
+        max_length=10, choices=PriceTypes.choices, default=PriceTypes.FIXED
     )
-    image = models.ImageField(
-        upload_to="products/", verbose_name="Product Image", null=True, blank=True
+
+    # Categories & Metadata
+    type = models.CharField(
+        max_length=100, help_text="Category like Software, Hardware"
     )
+
+    # TODO: Update to actual reviews and ratings system
+    rating = models.DecimalField(max_digits=3, decimal_places=1, default=5.0)
+    reviews = models.IntegerField(default=0)
+
+    # Text-based lists are fine in JSONField (Admin can type these as JSON/Text)
+    features = models.JSONField(default=list, blank=True)
+    specifications = models.JSONField(default=dict, blank=True)
 
     def __str__(self):
-        return str(self.name)
+        return self.name
 
-    # TODO: Add More Fields later as per requirement
+
+class ProductImage(models.Model):
+    product = models.ForeignKey(
+        Product, related_name="images", on_delete=models.CASCADE
+    )
+    image = models.ImageField(upload_to="products/gallery/")
+    alt_text = models.CharField(max_length=255, blank=True, null=True)
+
+    def __str__(self):
+        return f"Image for {self.product.name}"
