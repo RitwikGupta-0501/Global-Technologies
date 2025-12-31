@@ -15,18 +15,21 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 
-from core.views import home
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path
-from product.views import product_detail
+from ninja import NinjaAPI
+from product.api import router as product_router
+
+api = NinjaAPI(
+    title="Global Tech API", description="API for Next.js Frontend", version="1.0.0"
+)
+api.add_router("/products", product_router)
 
 urlpatterns = [
-    path("admin/", admin.site.urls),
-    path("", home, name="home"),
-    # Prodcut URLs
-    path("products/<int:product_id>/", product_detail, name="product_detail"),
+    path("admin/", admin.site.urls),  # URL for Admin page (handled by base django)
+    path("api/", api.urls),  # URL for the api (handled by django ninja)
 ]
 
 if settings.DEBUG:
