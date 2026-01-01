@@ -16,10 +16,13 @@ class Product(models.Model):
     )
 
     # Categories & Metadata
-    type = models.CharField(
+    category = models.CharField(
         max_length=100, help_text="Category like Software, Hardware"
     )
-
+    type = models.CharField(
+        max_length=300,
+        help_text="License Type like Perpetual Licnese, Annual License, etc.",
+    )
     # TODO: Update to actual reviews and ratings system
     rating = models.DecimalField(max_digits=3, decimal_places=1, default=5.0)
     reviews = models.IntegerField(default=0)

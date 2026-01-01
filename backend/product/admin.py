@@ -16,8 +16,8 @@ class ProductImageInline(TabularInline):
 @admin.register(Product)
 class ProductAdmin(ModelAdmin):  # Inherit from ModelAdmin
     inlines = [ProductImageInline]
-    list_display = ("name", "price", "type", "price_type", "rating")
-    search_fields = ("name", "type")
+    list_display = ("name", "price", "category", "type", "price_type", "rating")
+    search_fields = ("name", "category", "type")
 
     # Your JSON widget still works perfectly here!
     formfield_overrides = {

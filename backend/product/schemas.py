@@ -9,6 +9,7 @@ class ProductSchema(Schema):
     name: str
     description: str
     price: Optional[Decimal] = None
+    category: str
     type: str
     price_type: str
     rating: float
