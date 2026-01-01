@@ -48,12 +48,14 @@ INSTALLED_APPS = [
     "product",
     "core",
     # Customization
+    "corsheaders",  # To allow talking to frontend
     "django_json_widget",
 ]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "corsheaders.middleware.CorsMiddleware",  # Middleware to implement CORS
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -141,3 +143,9 @@ AUTH_USER_MODEL = "user.User"
 # Setting MEDIA Dirs
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
+
+# CORS Configuration
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+]
