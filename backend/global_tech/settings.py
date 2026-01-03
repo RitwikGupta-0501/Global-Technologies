@@ -47,8 +47,8 @@ INSTALLED_APPS = [
     # Personal Apps
     "user",
     "product",
-    "core",
     # Customization
+    "django_q",  # Cron Jobs
     "ninja_jwt",  # JWT Authentication Library
     "ninja_jwt.token_blacklist",  # For flushing old tokens from DB
     "corsheaders",  # To allow talking to frontend
@@ -168,4 +168,38 @@ NINJA_JWT = {
     "USER_ID_CLAIM": "user_id",
     "AUTH_TOKEN_CLASSES": ("ninja_jwt.tokens.AccessToken",),
     "TOKEN_TYPE_CLAIM": "token_type",
+}
+
+# Q2 Congifuration
+Q_CLUSTER = {
+    "name": "DjangORM",
+    "workers": 4,  # Number of worker threads
+    "recycle": 500,  # Restart worker after 500 tasks (prevents memory leaks)
+    "timeout": 60,  # Kill task if it takes > 60s
+    "django_redis": "default",  # Use your existing Redis cache connection
+    "retry": 120,  # Retry failed tasks after 120s
+    "save_limit": 250,  # Keep last 250 finished tasks in DB for review
+    "bulk": 10,
+    "orm": "default",  # Use Django ORM for storing task results/schedule
+}
+
+# Redis Configuration
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/1",  # Or your Redis URL
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            "COMPRESSOR": "django_redis.compressors.zlib.ZlibCompressor",
+            "IGNORE_EXCEPTIONS": True,
+        },
+    }
+}
+
+SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+SESSION_CACHE_ALIAS = "default"
+
+# Security
+NINJA_THROTTLE_RATES = {
+    "auth": "5/m",  # Allow only 5 attempts per minute per IP
 }
