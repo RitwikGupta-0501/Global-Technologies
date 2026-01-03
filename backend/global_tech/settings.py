@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 import os
+from datetime import timedelta
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -48,6 +49,8 @@ INSTALLED_APPS = [
     "product",
     "core",
     # Customization
+    "ninja_jwt",  # JWT Authentication Library
+    "ninja_jwt.token_blacklist",  # For flushing old tokens from DB
     "corsheaders",  # To allow talking to frontend
     "django_json_widget",
 ]
@@ -149,3 +152,20 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
 ]
+
+# JWT Configuration
+NINJA_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),  # Short-lived access
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),  # Longer refresh
+    "ROTATE_REFRESH_TOKENS": True,  # Rotation on refresh
+    "BLACKLIST_AFTER_ROTATION": True,  # Invalidate old refresh
+    "ALGORITHM": "HS256",  # Or RS256 with key pair
+    # For HS256, default SIGNING_KEY is Django's SECRET_KEY if not overridden
+    # "SIGNING_KEY": SECRET_KEY,                        # Optionally explicit
+    "AUTH_HEADER_TYPES": ("Bearer", "JWT"),  # e.g. Authorization: Bearer <token>
+    "AUTH_HEADER_NAME": "HTTP_AUTHORIZATION",
+    "USER_ID_FIELD": "id",
+    "USER_ID_CLAIM": "user_id",
+    "AUTH_TOKEN_CLASSES": ("ninja_jwt.tokens.AccessToken",),
+    "TOKEN_TYPE_CLAIM": "token_type",
+}

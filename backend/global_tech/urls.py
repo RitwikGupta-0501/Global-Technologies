@@ -19,12 +19,15 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path
-from ninja import NinjaAPI
+from ninja_extra import NinjaExtraAPI
+from ninja_jwt.controller import NinjaJWTDefaultController
 from product.api import router as product_router
 
-api = NinjaAPI(
+api = NinjaExtraAPI(
     title="Global Tech API", description="API for Next.js Frontend", version="1.0.0"
 )
+api.register_controllers(NinjaJWTDefaultController)
+
 api.add_router("/products", product_router)
 
 urlpatterns = [
