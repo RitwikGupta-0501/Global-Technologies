@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     # Customization
     "django_q",  # Cron Jobs
     "ninja_jwt",  # JWT Authentication Library
+    "ninja_extra",
     "ninja_jwt.token_blacklist",  # For flushing old tokens from DB
     "corsheaders",  # To allow talking to frontend
     "django_json_widget",
@@ -198,6 +199,25 @@ CACHES = {
 
 SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 SESSION_CACHE_ALIAS = "default"
+
+# Email Configuration
+if DEBUG:
+    # LOCAL DEVELOPMENT: Prints emails to the terminal
+    # No internet connection required.
+    EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+else:
+    # PRODUCTION: Sends real emails via SMTP
+    # These values should be set in your .env file on the server
+    EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+    EMAIL_HOST = os.environ.get("EMAIL_HOST", "smtp.gmail.com")
+    EMAIL_PORT = int(os.environ.get("EMAIL_PORT", 587))
+    EMAIL_USE_TLS = os.environ.get("EMAIL_USE_TLS", "True") == "True"
+    EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
+    EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
+# Always set a default sender
+DEFAULT_FROM_EMAIL = os.environ.get(
+    "DEFAULT_FROM_EMAIL", "NexGen Support <noreply@nexgen.com>"
+)
 
 # Security
 NINJA_THROTTLE_RATES = {

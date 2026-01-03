@@ -22,13 +22,16 @@ from django.urls import path
 from ninja_extra import NinjaExtraAPI
 from ninja_jwt.controller import NinjaJWTDefaultController
 from product.api import router as product_router
+from user.api import router as user_auth_router
 
 api = NinjaExtraAPI(
     title="Global Tech API", description="API for Next.js Frontend", version="1.0.0"
 )
+
 api.register_controllers(NinjaJWTDefaultController)
 
 api.add_router("/products", product_router)
+api.add_router("/auth", user_auth_router)
 
 urlpatterns = [
     path("admin/", admin.site.urls),  # URL for Admin page (handled by base django)
