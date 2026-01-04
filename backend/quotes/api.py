@@ -1,6 +1,7 @@
 from django.shortcuts import get_object_or_404
 from django_q.tasks import async_task
 from ninja import Router
+from ninja_jwt.authentication import JWTAuth
 from product.models import Product
 
 from .models import QuoteRequest
@@ -10,7 +11,7 @@ router = Router()
 
 
 # --- Endpoints ---
-@router.post("/request", response=QuoteSuccessSchema, auth=None)
+@router.post("/request", response=QuoteSuccessSchema, auth=JWTAuth())
 def create_quote_request(request, data: QuoteInputSchema):
     # 1. Validate Product exists
     product = get_object_or_404(Product, id=data.product_id)
