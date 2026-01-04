@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     # Personal Apps
     "user",
     "product",
+    "quotes",
     # Customization
     "django_q",  # Cron Jobs
     "ninja_jwt",  # JWT Authentication Library

@@ -22,6 +22,7 @@ from django.urls import path
 from ninja_extra import NinjaExtraAPI
 from ninja_jwt.controller import NinjaJWTDefaultController
 from product.api import router as product_router
+from quotes.api import router as quotes_router
 from user.api import router as user_auth_router
 
 api = NinjaExtraAPI(
@@ -32,6 +33,7 @@ api.register_controllers(NinjaJWTDefaultController)
 
 api.add_router("/products", product_router)
 api.add_router("/auth", user_auth_router)
+api.add_router("/quotes", quotes_router)
 
 urlpatterns = [
     path("admin/", admin.site.urls),  # URL for Admin page (handled by base django)
