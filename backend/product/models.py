@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.text import slugify
 
 
 class Product(models.Model):
@@ -7,6 +8,7 @@ class Product(models.Model):
         QUOTE = "quote", "Quote"
 
     name = models.CharField(max_length=255)
+    slug = models.SlugField(max_length=255, blank=True, null=False, unique=True)
     description = models.TextField()
 
     # Pricing
@@ -30,6 +32,12 @@ class Product(models.Model):
     # Text-based lists are fine in JSONField (Admin can type these as JSON/Text)
     features = models.JSONField(default=list, blank=True)
     specifications = models.JSONField(default=dict, blank=True)
+
+    def save(self, *args, **kwargs):
+        # 2. Auto-generate slug from name if it's empty
+        if not self.slug:
+            self.slug = slugify(self.name)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.name

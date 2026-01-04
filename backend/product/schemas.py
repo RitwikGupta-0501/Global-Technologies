@@ -7,6 +7,7 @@ from ninja import Schema
 class ProductSchema(Schema):
     id: int
     name: str
+    slug: str
     description: str
     price: Optional[Decimal] = None
     category: str
