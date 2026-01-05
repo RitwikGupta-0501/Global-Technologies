@@ -5,37 +5,55 @@ from django.conf import settings
 from django.db import transaction
 from django.shortcuts import get_object_or_404
 from ninja import Router
+from ninja.errors import HttpError
+from ninja_jwt.authentication import JWTAuth
 from product.models import Product
 
 from .models import Order, OrderItem, SavedAddress
-from .schemas import OrderCreateSchema, OrderInitSchema, SavedAddressSchema
+from .schemas import (
+    OrderCreateSchema,
+    OrderInitSchema,
+    PaymentVerifySchema,
+    SavedAddressSchema,
+)
 
 router = Router()
 
+
 # Initialize Razorpay Client
-client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+def get_razorpay_client():
+    """
+    Returns an authenticated Razorpay client.
+    Using a function ensures we don't crash if settings are missing
+    until we actually try to use it.
+    """
+    return razorpay.Client(
+        auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET)
+    )
 
 
 # --- ENDPOINTS ---
-@router.post("/initiate", response=OrderInitSchema, auth=None)
+@router.post("/initiate", response=OrderInitSchema, auth=JWTAuth())  # <--- Added Auth
 def initiate_order(request, data: OrderCreateSchema):
+    client = get_razorpay_client()
+
     with transaction.atomic():
-        # 1. Create the Local Order Record
+        # 1. Create Order
+        # Since auth is required, request.auth is GUARANTEED to be the user
         order = Order.objects.create(
-            user=request.auth if request.auth else None,
+            user=request.auth,  # <--- Simplified! No "if/else" needed
             first_name=data.first_name,
             last_name=data.last_name,
             email=data.email,
             phone=data.phone,
             company_name=data.company_name,
             gstin=data.gstin,
-            # Billing
+            # Address Mapping...
             billing_address_line1=data.billing_address.address_line1,
             billing_address_line2=data.billing_address.address_line2,
             billing_city=data.billing_address.city,
             billing_state=data.billing_address.state,
             billing_pincode=data.billing_address.pincode,
-            # Shipping
             shipping_address_line1=data.shipping_address.address_line1,
             shipping_address_line2=data.shipping_address.address_line2,
             shipping_city=data.shipping_address.city,
@@ -44,27 +62,12 @@ def initiate_order(request, data: OrderCreateSchema):
             status="PENDING",
         )
 
-        # 2. Process Items & Calculate Total
-        if data.save_info and request.auth:
-            # Save Shipping
-            SavedAddress.objects.create(
-                user=request.auth,
-                type="SHIPPING",
-                full_name=f"{data.first_name} {data.last_name}",
-                phone=data.phone,
-                address_line1=data.shipping_address.address_line1,
-                address_line2=data.shipping_address.address_line2,
-                city=data.shipping_address.city,
-                state=data.shipping_address.state,
-                pincode=data.shipping_address.pincode,
-            )
-
+        # 2. Process Items (Same as before)
         calculated_total = 0
         for item_data in data.items:
             product = get_object_or_404(Product, id=item_data.product_id)
-
             if product.price_type != "fixed" or not product.price:
-                continue  # Skip quote items
+                continue
 
             line_total = product.price * item_data.quantity
             calculated_total += line_total
@@ -79,20 +82,31 @@ def initiate_order(request, data: OrderCreateSchema):
         order.total_amount = calculated_total
         order.save()
 
-        # 3. Create Razorpay Order
-        # Razorpay expects amount in PAISE (multiply by 100)
+        # 3. Handle "Save Address" (Protected automatically now)
+        if data.save_info:
+            SavedAddress.objects.create(
+                user=request.auth,  # <--- Simple
+                type="SHIPPING",
+                full_name=f"{data.first_name} {data.last_name}",
+                phone=data.phone,
+                address_line1=data.shipping_address.address_line1,
+                address_line2=data.shipping_address.address_line2,
+                city=data.shipping_address.city,
+                state=data.shipping_address.state,
+                pincode=data.shipping_address.pincode,
+            )
+
+        # 4. Razorpay Logic (Same as before)
         amount_in_paise = int(calculated_total * 100)
+        razorpay_order = client.order.create(
+            {
+                "amount": amount_in_paise,
+                "currency": "INR",
+                "receipt": f"order_rcptid_{order.id}",
+                "payment_capture": 1,
+            }
+        )
 
-        razorpay_order_data = {
-            "amount": amount_in_paise,
-            "currency": "INR",
-            "receipt": f"order_rcptid_{order.id}",
-            "payment_capture": 1,  # Auto capture
-        }
-
-        razorpay_order = client.order.create(data=razorpay_order_data)
-
-        # 4. Save Razorpay ID to DB
         order.razorpay_order_id = razorpay_order["id"]
         order.save()
 
@@ -105,9 +119,44 @@ def initiate_order(request, data: OrderCreateSchema):
     }
 
 
-@router.get("/my-addresses", response=List[SavedAddressSchema])
+@router.get("/my-addresses", response=List[SavedAddressSchema], auth=JWTAuth())
 def get_my_addresses(request):
     # This requires the user to be logged in
     if not request.auth:
         return []
     return SavedAddress.objects.filter(user=request.auth)
+
+
+@router.post("/verify", auth=JWTAuth())
+def verify_payment(request, data: PaymentVerifySchema):
+    # Only the user who created the order should be able to verify it?
+    # Or just ensure they are logged in.
+
+    order = get_object_or_404(Order, razorpay_order_id=data.razorpay_order_id)
+
+    # Optional Security: Ensure the logged-in user owns this order
+    if order.user != request.auth:
+        raise HttpError(403, "You are not authorized to verify this order")
+
+    client = get_razorpay_client()
+
+    try:
+        client.utility.verify_payment_signature(
+            {
+                "razorpay_order_id": data.razorpay_order_id,
+                "razorpay_payment_id": data.razorpay_payment_id,
+                "razorpay_signature": data.razorpay_signature,
+            }
+        )
+    except razorpay.errors.SignatureVerificationError:
+        order.status = "FAILED"
+        order.save()
+        raise HttpError(400, "Invalid Payment Signature")
+
+    with transaction.atomic():
+        order.status = "PAID"
+        order.razorpay_payment_id = data.razorpay_payment_id
+        order.razorpay_signature = data.razorpay_signature
+        order.save()
+
+    return {"status": "success", "message": "Payment verified successfully"}

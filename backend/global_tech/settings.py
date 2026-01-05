@@ -190,7 +190,9 @@ Q_CLUSTER = {
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://127.0.0.1:6379/1",  # Or your Redis URL
+        "LOCATION": os.environ.get(
+            "REDIS_URL", "redis://127.0.0.1:6379/1"
+        ),  # Or your Redis URL
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
             "COMPRESSOR": "django_redis.compressors.zlib.ZlibCompressor",
@@ -225,3 +227,7 @@ DEFAULT_FROM_EMAIL = os.environ.get(
 NINJA_THROTTLE_RATES = {
     "auth": "5/m",  # Allow only 5 attempts per minute per IP
 }
+
+# RAZORPAY CONFIGURATION
+RAZORPAY_KEY_ID = os.environ.get("RAZORPAY_KEY_ID")
+RAZORPAY_KEY_SECRET = os.environ.get("RAZORPAY_KEY_SECRET")

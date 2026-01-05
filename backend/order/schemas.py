@@ -52,3 +52,9 @@ class SavedAddressSchema(Schema):
     state: str
     pincode: str
     is_default: bool
+
+
+class PaymentVerifySchema(Schema):
+    razorpay_order_id: str
+    razorpay_payment_id: str
+    razorpay_signature: str
