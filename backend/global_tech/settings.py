@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     "user",
     "product",
     "quotes",
+    "order",
     # Customization
     "django_q",  # Cron Jobs
     "ninja_jwt",  # JWT Authentication Library
