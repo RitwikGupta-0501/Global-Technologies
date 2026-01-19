@@ -60,6 +60,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "corsheaders.middleware.CorsMiddleware",  # Middleware to implement CORS
     "django.middleware.common.CommonMiddleware",
@@ -90,7 +91,7 @@ TEMPLATES = [
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 STATIC_URL = "static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
-STATIC_ROOT = BASE_DIR / "static"
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 WSGI_APPLICATION = "global_tech.wsgi.application"
 
@@ -232,3 +233,6 @@ NINJA_THROTTLE_RATES = {
 # RAZORPAY CONFIGURATION
 RAZORPAY_KEY_ID = os.environ.get("RAZORPAY_KEY_ID")
 RAZORPAY_KEY_SECRET = os.environ.get("RAZORPAY_KEY_SECRET")
+
+# WHITENOISE CONTENT DISTRIBUTION CONFIG
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
