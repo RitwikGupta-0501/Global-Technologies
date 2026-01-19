@@ -1,0 +1,20 @@
+services:
+  postgres-db:
+    image: postgres:16-alpine
+    container_name: global_tech_postgres
+    restart: on-failure
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: global_tech
+    ports:
+      - "5432:5432"
+    volumes:
+      - /data/Programming/postgresql/data:/var/lib/postgresql/data
+
+  redis-cache:
+    image: redis:7-alpine
+    container_name: global_tech_redis
+    restart: on-failure
+    ports:
+      - "6379:6379"

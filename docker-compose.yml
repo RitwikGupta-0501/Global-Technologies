@@ -1,20 +1,44 @@
 services:
-  postgres-db:
-    image: postgres:16-alpine
-    container_name: global_tech_postgres
-    restart: on-failure
-    environment:
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: root
-      POSTGRES_DB: global_tech
-    ports:
-      - "5432:5432"
-    volumes:
-      - /data/Programming/postgresql/data:/var/lib/postgresql/data
-
-  redis-cache:
+  redis:
     image: redis:7-alpine
-    container_name: global_tech_redis
-    restart: on-failure
+    container_name: globaltech-redis
     ports:
       - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+    restart: unless-stopped
+
+  web:
+    image: globaltech-backend
+    container_name: globaltech-web
+    command: gunicorn global_tech.wsgi:application --bind 0.0.0.0:8000 --workers 3
+    volumes:
+      - media_volume:/app/media
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      - REDIS_URL=redis://redis:6379/1
+    depends_on:
+      - redis
+    restart: unless-stopped
+
+  djangoq:
+    image: globaltech-backend
+    container_name: globaltech-djangoq
+    command: python manage.py qcluster
+    volumes:
+      - media_volume:/app/media
+    env_file:
+      - .env
+    environment:
+      - REDIS_URL=redis://redis:6379/1
+    depends_on:
+      - redis
+    restart: unless-stopped
+
+volumes:
+  redis_data:
+  media_volume:
