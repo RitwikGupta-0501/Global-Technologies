@@ -163,7 +163,7 @@ CORS_ALLOW_ALL_ORIGINS = True
 
 CSRF_TRUSTED_ORIGINS = [
     # Which origins can submit forms (like login)
-    "https://d1emer4ui8tqga.cloudfront.net",
+    "https://98.130.134.127.nip.io",
     "https://globaltechnologies-ochre.vercel.app",
     "https://globaltechnologies-8aciib479-ritwik-guptas-projects.vercel.app",
 ]
