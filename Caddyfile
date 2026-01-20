@@ -1,3 +1,16 @@
 98.130.134.127.nip.io {
+    # 1. Serve Media Files (User uploads)
+    handle_path /media/* {
+        root * /app/media
+        file_server
+    }
+
+    # 2. Serve Static Files (CSS/JS for Admin panel)
+    handle_path /static/* {
+        root * /app/staticfiles
+        file_server
+    }
+
+    # 3. Proxy everything else to Django
     reverse_proxy web:8000
 }
