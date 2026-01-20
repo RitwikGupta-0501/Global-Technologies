@@ -154,10 +154,27 @@ MEDIA_ROOT = BASE_DIR / "media"
 
 # CORS Configuration
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
     "https://globaltechnologies-8aciib479-ritwik-guptas-projects.vercel.app",
     "https://d1emer4ui8tqga.cloudfront.net",
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    # Which origins can submit forms (like login)
+    "https://d1emer4ui8tqga.cloudfront.net",
+    "https://globaltechnologies-8aciib479-ritwik-guptas-projects.vercel.app",
+]
+
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_HEADERS = [
+    "accept",
+    "accept-encoding",
+    "authorization",
+    "content-type",
+    "dnt",
+    "origin",
+    "user-agent",
+    "x-csrftoken",
+    "x-requested-with",
 ]
 
 # JWT Configuration
