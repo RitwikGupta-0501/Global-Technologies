@@ -153,11 +153,13 @@ MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
 # CORS Configuration
-CORS_ALLOWED_ORIGINS = [
-    "https://globaltechnologies-8aciib479-ritwik-guptas-projects.vercel.app",
-    "https://globaltechnologies-ochre.vercel.app",
-    "https://d1emer4ui8tqga.cloudfront.net",
-]
+# CORS_ALLOWED_ORIGINS = [
+#     "https://globaltechnologies-8aciib479-ritwik-guptas-projects.vercel.app",
+#     "https://globaltechnologies-ochre.vercel.app",
+#     "https://d1emer4ui8tqga.cloudfront.net",
+# ]
+
+CORS_ALLOW_ALL_ORIGINS = True
 
 CSRF_TRUSTED_ORIGINS = [
     # Which origins can submit forms (like login)
